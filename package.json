@@ -1,0 +1,30 @@
+{
+  "name": "website",
+  "version": "1.0.0",
+  "description": "kezi's website",
+  "main": "index.js",
+  "dependencies": {
+    "bootstrap": "^4.1.0",
+    "compression": "^1.7.2",
+    "connect-timeout": "^1.9.0",
+    "ejs": "^2.5.8",
+    "express": "^4.16.3",
+    "file-exists": "^5.0.1",
+    "github-webhook-handler": "^0.7.1",
+    "jquery": "^3.3.1",
+    "node-sass": "^4.8.3",
+    "node-sass-middleware": "^0.11.0",
+    "nodegit": "^0.22.0",
+    "path": "^0.12.7",
+    "popper.js": "^1.14.3",
+    "primer-markdown": "^3.7.5",
+    "showdown": "^1.8.6",
+    "yarn": "^1.5.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "kezi",
+  "license": "MIT"
+}

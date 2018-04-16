@@ -1,0 +1,28 @@
+<% include ../partials/header %>
+<%
+var inactive = 'class="breadcrumb-item"';
+var active = 'class="breadcrumb-item active" aria-current="page"';
+%>
+<main class="container">
+    <% if (history.length > 1) { %>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <% for (var i = 0; i < history.length; i++) { %>
+                    <% if (i != history.length - 1) { %>
+                        <li <%- i == history.length - 1 ? active : inactive %>>
+                            <a href="/<%= history[i].path %>"><%= history[i].title -%></a>
+                        </li>
+                    <% }　else { %>
+                        <li <%- i == history.length - 1 ? active : inactive %>><%= history[i].title -%></li>
+                    <% } %>
+                <% } %>
+            </ol>
+        </nav>
+    <% } %>
+
+    <div class="markdown-body">
+        <%- md %>
+    </div>
+</main>
+
+<% include ../partials/footer %>

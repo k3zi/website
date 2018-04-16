@@ -1,0 +1,79 @@
+@import "primer-markdown/index.scss";
+
+body {
+    background-color: #444;
+}
+
+.navbar-brand {
+    font-weight: bold;
+    background-color: #fff;
+    padding: 1px 7px;
+    border-radius: 11px;
+    color: #000 !important;
+}
+
+.jumbotron {
+    border-radius: 0;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    background-color: #fff;
+}
+
+.breadcrumb {
+    border-radius: 0;
+    margin-bottom: 0;
+    border-bottom: 1px solid #ddd;
+}
+
+.markdown-body {
+    padding: 30px;
+    font-size: 16px;
+    color: #333;
+    background-color: #fff;
+    overflow: scroll;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+
+    a {
+        color: #337ab7;
+    }
+
+    code {
+        color: inherit;
+    }
+}
+
+.site-header {
+    background: #333;
+    background: rgba(0, 0, 0, 0.8);
+
+    a {
+        color: #999;
+        transition: ease-in-out color .15s;
+    }
+
+    a:hover {
+        color: #fff;
+        text-decoration: none;
+    }
+}
+
+.border-top { border-top: 1px solid #e5e5e5; }
+.border-bottom { border-bottom: 1px solid #e5e5e5; }
+
+.box-shadow { box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05); }
+
+.flex-equal > * {
+  -ms-flex: 1;
+  flex: 1;
+}
+@media (min-width: 768px) {
+  .flex-md-equal > * {
+    -ms-flex: 1;
+    flex: 1;
+  }
+}
+
+.overflow-hidden {
+    overflow: hidden;
+}
