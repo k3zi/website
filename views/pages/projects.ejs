@@ -1,0 +1,115 @@
+<%- include('../partials/header') %>
+
+<main class="container">
+    <div class="jumbotron">
+        <h3>Projects <span class="badge badge-secondary">3</span></h3>
+        <hr/>
+        <div class="card-columns">
+            <div class="card text-center">
+                <div class="card-header">
+                    Martin HS Assassins
+                </div>
+                <div class="card-body text-left">
+                    <h5 class="card-title">Game of Assassins</h5>
+                    <p class="card-text text-left">
+                        As a tradition of my former high school, seniors organize a game of assasins. In short, a game where one is assigned a target and must swipe them with a sharpy. A senior at the time, I  was asked to create and monitor the game for that year. The game was hosted on a website and comunicated with players via Twitter.
+                        <br/>
+                        Additional features included:
+                    </p>
+                    <ul>
+                        <li>Checking score via leaderboard</li>
+                        <li>Receiving bonus points for including pictures</li>
+                        <li>Information and hints that could be bought with points</li>
+                    </ul>
+                    <h6>
+                        Technologies Used:
+                    </h6>
+                    <div>
+                        <span class="badge badge-pill badge-dark">PHP</span>
+                        <span class="badge badge-pill badge-dark">HTML</span>
+                        <span class="badge badge-pill badge-dark">Javascript</span>
+                        <span class="badge badge-pill badge-dark">CSS</span>
+                    </div>
+                </div>
+                <div class="card-footer text-muted text-left">
+                    2016
+                    <a target="_blank" href="https://github.com/k3zi/mhsa" class="btn btn-primary btn-sm float-right"><%- octicon['mark-github'].toSVG({ fill: 'white' }) %> Github</a>
+                </div>
+            </div>
+
+            <div class="card text-center">
+                <div class="card-header">
+                    University Engineering Project
+                </div>
+                <div class="card-body text-left">
+                    <h5 class="card-title">Advanced Energy Vehicle</h5>
+                    <p class="card-text text-left">
+                        <img src="https://cpb-us-w2.wpmucdn.com/u.osu.edu/dist/c/41907/files/2017/02/final_design-1rir819.png" class="w-100" />
+                        <hr/>
+                        An Advanced Energy Vehicle was necessary for the transportation of R2D2 units for the alliance, who was rebuilding their army. They wished to utilize the AEV system due to its energy / cost efficiency. The AEV transport system must be consistent and focus on conserving as much energy while meeting all constraints and guidelines. It hauled cargo from one point to another, on variable tracks. The team’s overall goal was to develop an AEV that could perform different scenarios effectively without having to modify any code. The team designed, tested and implemented an AEV to showcase to the rebel alliance, a.k.a the instructional staff.
+                    </p>
+                    <h6>
+                        Additional Info:
+                    </h6>
+                    <ul>
+                        <li>The team was selected from the class to attend a showcase.</li>
+                        <li>Python was used after each vehicle run to plot the runs on an animated track. This helped identify any issues that came up. The group also used this data in the final project video.</li>
+                        <li>The teams final design sported a buzzer that played Star Wars themed music. Also the design had LEDs that would change colors based on the current status of the mission.</li>
+                    </ul>
+                    <h6>
+                        Technologies Used:
+                    </h6>
+                    <div>
+                        <span class="badge badge-pill badge-dark">C (language)</span>
+                        <span class="badge badge-pill badge-dark">Python</span>
+                        <span class="badge badge-pill badge-dark">Arduino</span>
+                    </div>
+                </div>
+                <div class="card-footer text-muted text-left">
+                    Spring 2017
+                </div>
+            </div>
+
+            <div class="card text-center">
+                <div class="card-header">
+                    ktaccent
+                </div>
+                <div class="card-body text-left">
+                    <h5 class="card-title">Japanese Sentence Accent Guesser</h5>
+                    <div class="card-text">
+                        <p>
+                        In my journeys learning Japanese, I've been able to
+                        recognize the key values that makes a speaker sound
+                        natural. In Japanese several words share the same
+                        spelling but differ in pitch. During spoken conversation
+                        this pitch makes words recognizable and distinguishable
+                        from other words and phrases. As Japanese is a
+                        pitch-based language, words have their own individual
+                        pitch associated with them, however when a word is used
+                        in a sentence the pitch can change depending on the
+                        surounding grammar. In order to become better acquainted
+                        with this structure I created a library that parses text
+                        and determines the pitch accent of the text at a
+                        sentence level.
+                        </p>
+                        <h6>
+                            Technologies Used:
+                        </h6>
+                        <div>
+                            <span class="badge badge-pill badge-dark">Node.js</span>
+                            <span class="badge badge-pill badge-dark">Javascript</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer text-muted text-left">
+                    April 2018 - <span class="badge badge-success">In Progress</span>
+                    <a target="_blank" href="https://github.com/k3zi/ktaccent" class="btn btn-primary btn-sm float-right"><%- octicon['mark-github'].toSVG({ fill: 'white' }) %> Github</a>
+                </div>
+            </div>
+        </div>
+        <hr/>
+        <a href="https://github.com/k3zi/"><button type="button" class="btn btn-primary btn-lg btn-block">Visit Github For More Projects →</button></a>
+    </div>
+</main>
+
+<%- include('../partials/footer') %>

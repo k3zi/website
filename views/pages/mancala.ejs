@@ -1,0 +1,438 @@
+<%- include('../partials/header') %>
+
+<main class="container">
+    <div class="jumbotron">
+        <h3>Mancala</h3>
+        <hr/>
+        <div class="row text-center">
+            <div id="mancalaPlayerTwoBasket" class="col-1 mancala-basket bg-warning display-4 rounded-lg align-middle">
+                0
+            </div>
+
+            <div class="col">
+                <div class="row text-white">
+                    <div id="mancalaTop1" class="col rounded-pill bg-secondary m-4 p-2">4</div>
+                    <div id="mancalaTop2" class="col rounded-pill bg-secondary m-4 p-2">4</div>
+                    <div id="mancalaTop3" class="col rounded-pill bg-secondary m-4 p-2">4</div>
+                    <div id="mancalaTop4" class="col rounded-pill bg-secondary m-4 p-2">4</div>
+                    <div id="mancalaTop5" class="col rounded-pill bg-secondary m-4 p-2">4</div>
+                    <div id="mancalaTop6" class="col rounded-pill bg-secondary m-4 p-2">4</div>
+                </div>
+                <div class="row text-white">
+                    <a href="javascript:playMove('1')" class="col"><div id="mancalaBottom1" class="rounded-pill bg-secondary m-4 p-2">4</div></a>
+                    <a href="javascript:playMove('2')" class="col"><div id="mancalaBottom2" class="rounded-pill bg-secondary m-4 p-2">4</div></a>
+                    <a href="javascript:playMove('3')" class="col"><div id="mancalaBottom3" class="rounded-pill bg-secondary m-4 p-2">4</div></a>
+                    <a href="javascript:playMove('4')" class="col"><div id="mancalaBottom4" class="rounded-pill bg-secondary m-4 p-2">4</div></a>
+                    <a href="javascript:playMove('5')" class="col"><div id="mancalaBottom5" class="rounded-pill bg-secondary m-4 p-2">4</div></a>
+                    <a href="javascript:playMove('6')" class="col"><div id="mancalaBottom6" class="rounded-pill bg-secondary m-4 p-2">4</div></a>
+                </div>
+            </div>
+
+            <div id="mancalaPlayerOneBasket" class="col-1 mancala-basket bg-primary display-4 rounded-lg text-white align-middle">
+                0
+            </div>
+        </div>
+    </div>
+</main>
+
+<script>
+    class GameMove {
+
+        constructor(player, holeNumber) {
+            this.player = player;
+            this.holeNumber = holeNumber;
+        }
+
+        isEqual(other) {
+            return other.player === this.player && this.holeNumber == other.holeNumber;
+        }
+
+    }
+
+    class GameState {
+
+        constructor(numberOfHoles = 6, marblesPerHole = 4) {
+            this.numberOfHoles = numberOfHoles;
+            this.marblesPerHole = marblesPerHole;
+            this.winningScore = 2 * this.numberOfHoles * this.marblesPerHole;
+
+            // Player Two: [13] [12, 11, 10, 9, 8, 7]
+            // Player One:      [0, 1, 2, 3, 4, 5]    [6]
+            this.playerOneSide = [...Array(numberOfHoles)].map((u) => marblesPerHole);
+            this.playerTwoSide = [...Array(numberOfHoles)].map((u) => marblesPerHole);
+
+            this.playerOneBasket = 0;
+            this.playerTwoBasket = 0;
+
+            this.currentPlayer = 1;
+            this.playing = true;
+            this.moves = [];
+        }
+
+        isEqual(other) {
+            return this.moves.length === other.moves.length
+                && this.moves.every((m, i) => other.moves[i].isEqual(m));
+        }
+
+        copy() {
+            const c = new GameState(this.numberOfHoles, this.marblesPerHole);
+            for (let move of this.moves) {
+                c.moves.push(new GameMove(move.player, move.holeNumber));
+            }
+
+            c.playerOneSide = this.playerOneSide.map(e => e);
+            c.playerTwoSide = this.playerTwoSide.map(e => e);
+            c.playerOneBasket = this.playerOneBasket;
+            c.playerTwoBasket = this.playerTwoBasket;
+            c.currentPlayer = this.currentPlayer;
+            c.playing = this.playing;
+
+            return c;
+        }
+
+        play(player, holeEntry) {
+            if (!this.playing) {
+                return;
+            }
+
+            const holeNumber = parseInt(holeEntry);
+            this.moves.push(new GameMove(player, holeNumber));
+
+            // Remove the marbles to be moved.
+            const numberOfMarbles = this.numberOfMarbles(holeNumber);
+            this.setNumberOfMarbles(holeNumber, 0);
+
+            // Set the next player's turn.
+            const playAgain = this.carryOver(player, holeNumber + 1, numberOfMarbles);
+            if (!playAgain) {
+                this.currentPlayer = this.oppositePlayer(player);
+            }
+
+            if (this.validMoves(1).length == 0 || this.validMoves(2).length == 0) {
+                this.playing = false;
+                for (let move of this.validMoves(1)) {
+                    this.addToBasket(1, this.numberOfMarbles(move));
+                    this.setNumberOfMarbles(move, 0);
+                }
+
+                for (let move of this.validMoves(2)) {
+                    this.addToBasket(2, this.numberOfMarbles(move));
+                    this.setNumberOfMarbles(move, 0);
+                }
+            }
+        }
+
+        // Returns true if the `player` gets to go again.
+        carryOver(player, holeNumber, numberOfMarbles) {
+            // Check overflow.
+            if (holeNumber > this.basketHoleNumber(2)) {
+                return this.carryOver(player, 0, numberOfMarbles);
+            }
+
+            // Handle case were current hole is basket of current player.
+            if (holeNumber == this.basketHoleNumber(player)) {
+                // Add one marble to current player's basket.
+                numberOfMarbles -= 1;
+                this.addToBasket(player, 1);
+
+                // If we landed on the basket keep the last player's turn.
+                if (numberOfMarbles == 0) {
+                    return true;
+                } else {
+                    return this.carryOver(player, holeNumber + 1, numberOfMarbles);
+                }
+            } else if (holeNumber == this.basketHoleNumber(this.oppositePlayer(player))) {
+                // Skip over other player's basket.
+                return this.carryOver(player, holeNumber + 1, numberOfMarbles);
+            } else if (numberOfMarbles == 1) {
+                // Last marble to place.
+                const oppositeHoleNumber = this.oppositeHoleNumber(holeNumber);
+                const oppositeHoleNumberOfMarbles = this.numberOfMarbles(oppositeHoleNumber);
+                if (this.ownerOf(holeNumber) == player && this.numberOfMarbles(holeNumber) == 0 && oppositeHoleNumberOfMarbles > 0) {
+                    this.addToBasket(player, 1);
+                    this.addToBasket(player, oppositeHoleNumberOfMarbles);
+                    this.setNumberOfMarbles(oppositeHoleNumber, 0);
+                } else {
+                    this.addOneTo(holeNumber);
+                }
+
+                return false;
+            } else {
+                this.addOneTo(holeNumber);
+                return this.carryOver(player, holeNumber + 1, numberOfMarbles - 1);
+            }
+
+            throw new Error('Reached end of carryOver function.');
+         }
+
+         addToBasket(player, number) {
+             if (player == 1) {
+                 this.playerOneBasket += number;
+             } else {
+                 this.playerTwoBasket += number;
+             }
+         }
+
+         addOneTo(holeNumber) {
+             this.setNumberOfMarbles(holeNumber, this.numberOfMarbles(holeNumber) + 1);
+         }
+
+         basketHoleNumber(player) {
+             return player == 1 ? this.numberOfHoles : (this.numberOfHoles * 2 + 1);
+         }
+
+         oppositeHoleNumber(holeNumber) {
+             const lastBasketNumber = this.numberOfHoles * 2;
+             return lastBasketNumber - holeNumber;
+         }
+
+         ownerOf(holeNumber) {
+             if (holeNumber < this.numberOfHoles) {
+                 return 1;
+             } else {
+                 return 2;
+             }
+         }
+
+         absoluteHoleNumber(holeNumber) {
+             if (holeNumber < this.numberOfHoles) {
+                 return holeNumber;
+             } else {
+                 return this.oppositeHoleNumber(holeNumber);
+             }
+         }
+
+        numberOfMarbles(holeNumber) {
+            if (holeNumber < this.numberOfHoles) {
+                return this.playerOneSide[holeNumber];
+            } else {
+                return this.playerTwoSide[this.absoluteHoleNumber(holeNumber)];
+            }
+        }
+
+        setNumberOfMarbles(holeNumber, numberOfMarbles) {
+            if (holeNumber < this.numberOfHoles) {
+                this.playerOneSide[holeNumber] = numberOfMarbles;
+            } else {
+                this.playerTwoSide[this.absoluteHoleNumber(holeNumber)] = numberOfMarbles;
+            }
+        }
+
+        numberOnSide(player) {
+            return this.validMoves(player)
+                .map(m => this.numberOfMarbles(m))
+                .reduce((a, b) => a + b, 0);
+        }
+
+        oppositePlayer(player) {
+            return player == 1 ? 2 : 1;
+        }
+
+        boardString() {
+            return '::::: ' + this.playerTwoSide.join(' | ') + ' :::::'
+                + '\n' + this.playerTwoBasket.toString().padEnd(4, ' ') + ': ' + this.playerTwoSide.map(x => ' ').join('   ') + ' :' + this.playerOneBasket.toString().padStart(4, ' ')
+                + '\n::::: ' + this.playerOneSide.join(' | ') + ' :::::';
+        }
+
+        validMoves(player) {
+            const tempHoleNumbers = [...Array(this.numberOfHoles)].map((v, i) => i);
+            const allHoleNumbers = player == 1
+                ? tempHoleNumbers
+                : tempHoleNumbers.map(n => this.oppositeHoleNumber(n));
+            return allHoleNumbers.filter(n => this.numberOfMarbles(n) > 0);
+        }
+
+        isValidMove(player, holeEntry) {
+            const holeNumber = parseInt(holeEntry);
+            return this.validMoves(player).includes(parseInt(holeNumber));
+        }
+
+        score(player) {
+            return player == 1 ? this.playerOneBasket : this.playerTwoBasket;
+        }
+
+        potentialScore(player) {
+            return this.score(player) + this.numberOnSide(player);
+        }
+
+        winningScore() {
+            return 2 * this.numberOfHoles * this.marblesPerHole;
+        }
+
+        winningPlayer() {
+            const playerOneScore = this.score(1);
+            const playerTwoScore = this.score(2);
+            if (playerOneScore > playerTwoScore) {
+                return 1;
+            } else if (playerOneScore < playerTwoScore) {
+                return 2;
+            } else {
+                return 0;
+            }
+        }
+
+    }
+
+    class DumbCPU {
+
+        constructor() {
+
+        }
+
+        nextMove(state, player) {
+            const validMoves = state.validMoves(2);
+            return validMoves[Math.floor(Math.random() * validMoves.length)];
+        }
+
+    }
+
+    class MinmaxCPU {
+
+        constructor(maxDepth) {
+            this.maxDepth = Math.max(maxDepth, 1);
+        }
+
+        nextMove(state, player) {
+            const result = this.minmax(state, player, player, 0, false);
+            return result.move;
+        }
+
+        indent(level) {
+            return '   '.repeat(level);
+        }
+
+        minmax(state, cpuPlayer, currentPlayer, depth, keepsTurn) {
+            if (depth < 3) {
+                //console.log(this.indent(depth) + `minmax(cpuPlayer: ${cpuPlayer}, currentPlayer: ${currentPlayer}, depth: ${depth}, keepsTurn: ${keepsTurn})`);
+            }
+
+            if (!state.playing || (!keepsTurn && depth >= this.maxDepth)) {
+                return {
+                    move: null,
+                    score: state.score(cpuPlayer) - state.score(state.oppositePlayer(cpuPlayer)),
+                    currentPlayer
+                };
+            }
+
+            const chosen = {
+                move: null,
+                score: currentPlayer === cpuPlayer ? -Infinity : Infinity,
+                currentPlayer
+            };
+
+            for (let move of state.validMoves(currentPlayer)) {
+                const newState = state.copy();
+                newState.play(currentPlayer, move);
+                if (depth < 3) {
+                    //console.log(this.indent(depth) + `moves: ${newState.moves.map(m => m.holeNumber)}`);
+                }
+
+                // Check what the opponent may do. Return highest score CPU can get.
+                const results = this.minmax(newState, cpuPlayer, newState.currentPlayer, depth + 1, newState.currentPlayer === currentPlayer);
+
+                if (currentPlayer === cpuPlayer && (results.score > chosen.score)) {
+                    chosen.move = move;
+                    chosen.score = results.score;
+                } else if (currentPlayer !== cpuPlayer && (results.score < chosen.score)) {
+                    chosen.move = move;
+                    chosen.score = results.score;
+                }
+            }
+
+            if (depth < 3) {
+                //console.log(this.indent(depth) + `returned`, chosen);
+                //console.log('');
+            }
+            return chosen;
+        }
+
+    }
+
+    class Game {
+
+        constructor() {
+            this.state = new GameState();
+            this.cpu = new MinmaxCPU(8);
+        }
+
+        start() {
+            this.printBoard();
+            // The player is first.
+            this.promptPlayerMove();
+        }
+
+        printBoard() {
+            console.log(this.state.boardString());
+            for (var i = 0; i < this.state.playerTwoSide.length; i++) {
+                document.getElementById(`mancalaTop${i + 1}`).innerHTML = this.state.playerTwoSide[i];
+                document.getElementById(`mancalaBottom${i + 1}`).innerHTML = this.state.playerOneSide[i];
+            }
+            document.getElementById("mancalaPlayerOneBasket").innerHTML = this.state.playerOneBasket;
+            document.getElementById("mancalaPlayerTwoBasket").innerHTML = this.state.playerTwoBasket;
+        }
+
+        promptNextMove() {
+            if (!this.state.playing) {
+                switch (this.state.winningPlayer()) {
+                    case 1:
+                        console.log('Player One wins.');
+                        break;
+                    case 2:
+                        console.log('Player Two wins.');
+                        break;
+                    default:
+                        console.log('Game ended in a tie.');
+                        break;
+                }
+                return;
+            }
+            if (this.state.currentPlayer == 1) {
+                this.promptPlayerMove();
+            } else {
+                this.promptCPUMove();
+            }
+        }
+
+        promptPlayerMove() {
+            return;
+            const self = this;
+            self.readline.question('Your move? ', number => {
+                if (!self.state.isValidMove(1, number - 1)) {
+                    return self.promptNextMove();
+                }
+
+                self.state.play(1, number - 1);
+                self.printBoard();
+                self.promptNextMove();
+            });
+        }
+
+        playMove(number) {
+            if (!this.state.isValidMove(1, number - 1)) {
+                return;
+            }
+
+            this.state.play(1, number - 1);
+            this.printBoard();
+            this.promptNextMove();
+        }
+
+        promptCPUMove() {
+            const move = this.cpu.nextMove(this.state, 2);
+            console.log('CPU choses: ' + move);
+            this.state.play(2, move);
+            this.printBoard();
+            this.promptNextMove();
+        }
+
+    }
+
+    const game = new Game();
+    game.start();
+
+    function playMove(number) {
+        game.playMove(number);
+    }
+</script>
+
+<%- include('../partials/footer') %>

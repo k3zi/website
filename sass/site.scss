@@ -1,7 +1,9 @@
 @import "primer-markdown/index.scss";
+@import "octicons/build/build";
 
 body {
     background-color: #444;
+    padding-bottom: 100px;
 }
 
 .navbar-brand {
@@ -17,6 +19,7 @@ body {
     border-bottom-left-radius: 10px;
     border-bottom-right-radius: 10px;
     background-color: #fff;
+    padding-top: 30px;
 }
 
 .breadcrumb {
@@ -58,22 +61,37 @@ body {
     }
 }
 
-.border-top { border-top: 1px solid #e5e5e5; }
-.border-bottom { border-bottom: 1px solid #e5e5e5; }
+.border-top {
+    border-top: 1px solid #e5e5e5;
+}
+.border-bottom {
+    border-bottom: 1px solid #e5e5e5;
+}
 
-.box-shadow { box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05); }
+.box-shadow {
+    box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
+}
 
 .flex-equal > * {
-  -ms-flex: 1;
-  flex: 1;
-}
-@media (min-width: 768px) {
-  .flex-md-equal > * {
     -ms-flex: 1;
     flex: 1;
-  }
+}
+
+@media (min-width: 768px) {
+    .flex-md-equal > * {
+        -ms-flex: 1;
+        flex: 1;
+    }
 }
 
 .overflow-hidden {
     overflow: hidden;
+}
+
+.btn-sm {
+    line-height: 1.0;
+}
+
+.card-columns {
+    column-count: 2;
 }
