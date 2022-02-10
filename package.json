@@ -15,7 +15,7 @@
     "file-exists": "^5.0.1",
     "github-webhook-handler": "^1.0.0",
     "jquery": "^3.4.1",
-    "node-sass": "^4.13.1",
+    "node-sass": "^7.0.0",
     "node-sass-middleware": "^0.11.0",
     "nodegit": "^0.26.5",
     "octicons": "^8.5.0",
